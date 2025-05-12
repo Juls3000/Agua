@@ -13,6 +13,7 @@
         /* Aseguramos que el cuerpo ocupe todo el alto disponible */
         body {
             min-height: 100vh;
+            font-family: "Inter", sans-serif; /* Usar fuente Inter */
         }
     </style>
 </head>
@@ -68,34 +69,86 @@
         </button>
 
         <p class="text-center text-gray-500 text-xs">
-            Marca las casillas a medida que bebes cada vaso de agua.
+            Marca las casillas a medida que bebes cada vaso de agua. El estado se guarda en tu navegador.
         </p>
     </div>
 
     <script>
-        // Script para manejar la fecha actual por defecto (opcional)
+        // Función para guardar el estado de las casillas en localStorage
+        function saveGlassState() {
+            const glassState = {};
+            const glassCheckboxes = document.querySelectorAll('.glass-checkbox');
+            glassCheckboxes.forEach(checkbox => {
+                glassState[checkbox.id] = checkbox.checked;
+            });
+            // Guardar el estado asociado a la fecha actual
+            const currentDate = document.getElementById('current-date').value;
+            localStorage.setItem(`waterTracker_${currentDate}`, JSON.stringify(glassState));
+        }
+
+        // Función para cargar el estado de las casillas desde localStorage
+        function loadGlassState() {
+            const currentDate = document.getElementById('current-date').value;
+            const savedState = localStorage.getItem(`waterTracker_${currentDate}`);
+            if (savedState) {
+                const glassState = JSON.parse(savedState);
+                const glassCheckboxes = document.querySelectorAll('.glass-checkbox');
+                glassCheckboxes.forEach(checkbox => {
+                    if (glassState[checkbox.id] !== undefined) {
+                        checkbox.checked = glassState[checkbox.id];
+                    }
+                });
+            } else {
+                // Si no hay estado guardado para la fecha, desmarcar todo
+                clearGlassState();
+            }
+        }
+
+        // Función para vaciar el estado de las casillas y borrar de localStorage para la fecha actual
+        function clearGlassState() {
+            const glassCheckboxes = document.querySelectorAll('.glass-checkbox');
+            glassCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            const currentDate = document.getElementById('current-date').value;
+            localStorage.removeItem(`waterTracker_${currentDate}`);
+        }
+
         window.onload = function() {
             const dateInput = document.getElementById('current-date');
             const today = new Date();
             const year = today.getFullYear();
             const month = String(today.getMonth() + 1).padStart(2, '0'); // Meses son 0-indexados
             const day = String(today.getDate()).padStart(2, '0');
-            dateInput.value = `${year}-${month}-${day}`;
+
+            // Cargar la fecha guardada si existe, si no, usar la fecha actual
+            const savedDate = localStorage.getItem('waterTracker_currentDate');
+            if (savedDate) {
+                dateInput.value = savedDate;
+            } else {
+                dateInput.value = `${year}-${month}-${day}`;
+            }
+
+
+            // Cargar el estado de las casillas para la fecha inicial
+            loadGlassState();
+
+            // Agregar listeners a las casillas para guardar el estado al cambiar
+            const glassCheckboxes = document.querySelectorAll('.glass-checkbox');
+            glassCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', saveGlassState);
+            });
 
             // Agregar listener al botón de vaciar
-            document.getElementById('clear-glasses').addEventListener('click', function() {
-                // Seleccionar todas las casillas de vasos
-                const glassCheckboxes = document.querySelectorAll('.glass-checkbox');
-                // Recorrer y desmarcar cada casilla
-                glassCheckboxes.forEach(checkbox => {
-                    checkbox.checked = false;
-                });
+            document.getElementById('clear-glasses').addEventListener('click', clearGlassState);
+
+            // Agregar listener al cambio de fecha para cargar el estado correspondiente
+            dateInput.addEventListener('change', loadGlassState);
+             // Guardar la fecha actual cuando cambie
+            dateInput.addEventListener('change', function() {
+                localStorage.setItem('waterTracker_currentDate', this.value);
             });
         };
-
-        // Script para (opcionalmente) guardar y cargar el estado de las casillas
-        // Esto requiere más lógica para manejar diferentes fechas.
-        // Por ahora, las casillas se reiniciarán al recargar la página.
     </script>
 </body>
 </html>
