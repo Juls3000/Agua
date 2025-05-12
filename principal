@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Consumo de Agua</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilo adicional para el cursor en las casillas */
+        .glass-checkbox {
+            cursor: pointer;
+        }
+        /* Aseguramos que el cuerpo ocupe todo el alto disponible */
+        body {
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-sm md:max-w-md">
+        <h1 class="text-2xl font-bold text-center mb-6 text-blue-600">Registro Diario de Agua</h1>
+
+        <div class="mb-6">
+            <label for="current-date" class="block text-gray-700 text-sm font-semibold mb-2">Fecha:</label>
+            <input type="date" id="current-date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+
+        <div class="mb-6">
+            <p class="block text-gray-700 text-sm font-semibold mb-2">Vasos de agua consumidos:</p>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div class="flex items-center justify-center">
+                    <input type="checkbox" id="glass1" class="glass-checkbox form-checkbox h-6 w-6 text-blue-600 rounded focus:ring-blue-500">
+                    <label for="glass1" class="sr-only">Vaso 1</label>
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="checkbox" id="glass2" class="glass-checkbox form-checkbox h-6 w-6 text-blue-600 rounded focus:ring-blue-500">
+                    <label for="glass2" class="sr-only">Vaso 2</label>
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="checkbox" id="glass3" class="glass-checkbox form-checkbox h-6 w-6 text-blue-600 rounded focus:ring-blue-500">
+                    <label for="glass3" class="sr-only">Vaso 3</label>
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="checkbox" id="glass4" class="glass-checkbox form-checkbox h-6 w-6 text-blue-600 rounded focus:ring-blue-500">
+                    <label for="glass4" class="sr-only">Vaso 4</label>
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="checkbox" id="glass5" class="glass-checkbox form-checkbox h-6 w-6 text-blue-600 rounded focus:ring-blue-500">
+                    <label for="glass5" class="sr-only">Vaso 5</label>
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="checkbox" id="glass6" class="glass-checkbox form-checkbox h-6 w-6 text-blue-600 rounded focus:ring-blue-500">
+                    <label for="glass6" class="sr-only">Vaso 6</label>
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="checkbox" id="glass7" class="glass-checkbox form-checkbox h-6 w-6 text-blue-600 rounded focus:ring-blue-500">
+                    <label for="glass7" class="sr-only">Vaso 7</label>
+                </div>
+                <div class="flex items-center justify-center">
+                    <input type="checkbox" id="glass8" class="glass-checkbox form-checkbox h-6 w-6 text-blue-600 rounded focus:ring-blue-500">
+                    <label for="glass8" class="sr-only">Vaso 8</label>
+                </div>
+            </div>
+        </div>
+
+        <p class="text-center text-gray-500 text-xs">
+            Marca las casillas a medida que bebes cada vaso de agua.
+        </p>
+    </div>
+
+    <script>
+        // Script para manejar la fecha actual por defecto (opcional)
+        window.onload = function() {
+            const dateInput = document.getElementById('current-date');
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0'); // Meses son 0-indexados
+            const day = String(today.getDate()).padStart(2, '0');
+            dateInput.value = `${year}-${month}-${day}`;
+        };
+
+        // Script para (opcionalmente) guardar y cargar el estado de las casillas
+        // Esto requiere más lógica para manejar diferentes fechas.
+        // Por ahora, las casillas se reiniciarán al recargar la página.
+    </script>
+</body>
+</html>
