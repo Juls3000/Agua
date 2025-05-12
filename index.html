@@ -63,6 +63,10 @@
             </div>
         </div>
 
+        <button id="clear-glasses" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline mb-4">
+            Vaciar Vasos
+        </button>
+
         <p class="text-center text-gray-500 text-xs">
             Marca las casillas a medida que bebes cada vaso de agua.
         </p>
@@ -77,6 +81,16 @@
             const month = String(today.getMonth() + 1).padStart(2, '0'); // Meses son 0-indexados
             const day = String(today.getDate()).padStart(2, '0');
             dateInput.value = `${year}-${month}-${day}`;
+
+            // Agregar listener al botón de vaciar
+            document.getElementById('clear-glasses').addEventListener('click', function() {
+                // Seleccionar todas las casillas de vasos
+                const glassCheckboxes = document.querySelectorAll('.glass-checkbox');
+                // Recorrer y desmarcar cada casilla
+                glassCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+            });
         };
 
         // Script para (opcionalmente) guardar y cargar el estado de las casillas
