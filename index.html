@@ -64,8 +64,12 @@
             </div>
         </div>
 
-        <button id="clear-glasses" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline mb-4">
-            Vaciar Vasos
+        <button id="clear-glasses" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline mb-2">
+            Vaciar Vasos del Día
+        </button>
+
+        <button id="clear-history" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded w-full focus:outline-none focus:shadow-outline mb-4">
+            Borrar Todo el Historial
         </button>
 
         <p class="text-center text-gray-500 text-xs">
@@ -83,24 +87,34 @@
             });
             // Guardar el estado asociado a la fecha actual
             const currentDate = document.getElementById('current-date').value;
-            localStorage.setItem(`waterTracker_${currentDate}`, JSON.stringify(glassState));
+            if (currentDate) { // Asegurarse de que haya una fecha seleccionada
+                 localStorage.setItem(`waterTracker_${currentDate}`, JSON.stringify(glassState));
+            }
         }
 
         // Función para cargar el estado de las casillas desde localStorage
         function loadGlassState() {
             const currentDate = document.getElementById('current-date').value;
+            if (!currentDate) { // Si no hay fecha, desmarcar todo
+                 clearGlassState();
+                 return;
+            }
             const savedState = localStorage.getItem(`waterTracker_${currentDate}`);
+            const glassCheckboxes = document.querySelectorAll('.glass-checkbox');
             if (savedState) {
                 const glassState = JSON.parse(savedState);
-                const glassCheckboxes = document.querySelectorAll('.glass-checkbox');
                 glassCheckboxes.forEach(checkbox => {
                     if (glassState[checkbox.id] !== undefined) {
                         checkbox.checked = glassState[checkbox.id];
+                    } else {
+                        checkbox.checked = false; // Desmarcar si no está en el estado guardado
                     }
                 });
             } else {
                 // Si no hay estado guardado para la fecha, desmarcar todo
-                clearGlassState();
+                glassCheckboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                });
             }
         }
 
@@ -111,8 +125,29 @@
                 checkbox.checked = false;
             });
             const currentDate = document.getElementById('current-date').value;
-            localStorage.removeItem(`waterTracker_${currentDate}`);
+            if (currentDate) {
+                 localStorage.removeItem(`waterTracker_${currentDate}`);
+            }
         }
+
+        // Función para borrar todo el historial de localStorage
+        function clearAllHistory() {
+            // Confirmar con el usuario antes de borrar todo
+            if (confirm("¿Estás seguro de que quieres borrar todo el historial de consumo de agua? Esta acción no se puede deshacer.")) {
+                // Iterar sobre todas las claves en localStorage
+                for (let i = localStorage.length - 1; i >= 0; i--) {
+                    const key = localStorage.key(i);
+                    // Si la clave comienza con 'waterTracker_', eliminarla
+                    if (key && key.startsWith('waterTracker_')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                // Después de borrar el historial, desmarcar las casillas para el día actual
+                clearGlassState();
+                alert("Todo el historial ha sido borrado.");
+            }
+        }
+
 
         window.onload = function() {
             const dateInput = document.getElementById('current-date');
@@ -129,7 +164,6 @@
                 dateInput.value = `${year}-${month}-${day}`;
             }
 
-
             // Cargar el estado de las casillas para la fecha inicial
             loadGlassState();
 
@@ -139,14 +173,16 @@
                 checkbox.addEventListener('change', saveGlassState);
             });
 
-            // Agregar listener al botón de vaciar
+            // Agregar listener al botón de vaciar vasos del día
             document.getElementById('clear-glasses').addEventListener('click', clearGlassState);
 
+            // Agregar listener al botón de borrar todo el historial
+            document.getElementById('clear-history').addEventListener('click', clearAllHistory);
+
             // Agregar listener al cambio de fecha para cargar el estado correspondiente
-            dateInput.addEventListener('change', loadGlassState);
-             // Guardar la fecha actual cuando cambie
             dateInput.addEventListener('change', function() {
-                localStorage.setItem('waterTracker_currentDate', this.value);
+                localStorage.setItem('waterTracker_currentDate', this.value); // Guardar la fecha actual cuando cambie
+                loadGlassState(); // Cargar el estado para la nueva fecha
             });
         };
     </script>
